@@ -13,7 +13,6 @@
 </section>
 <form class="demo-form" id="demo-form" novalidate>
 <input type="text" name="_honey" class="demo-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
-<input type="hidden" name="_template" value="table">
 <div class="field"><label for="demo-email">Your email <span aria-hidden="true">*</span></label><input id="demo-email" name="email" type="email" autocomplete="email" required placeholder="you@yourlab.org"><span class="field-error" id="demo-email-error" role="alert"></span></div>
 <div class="field"><label for="demo-subject">Subject <span aria-hidden="true">*</span></label><input id="demo-subject" name="subject" type="text" required maxlength="150" placeholder="Lab automation project"><span class="field-error" id="demo-subject-error" role="alert"></span></div>
 <div class="field"><label for="demo-message">What do you need? <span aria-hidden="true">*</span></label><textarea id="demo-message" name="message" rows="8" required placeholder="Your lab, the workflow you have in mind, and anything else that would help us prepare."></textarea><span class="field-error" id="demo-message-error" role="alert"></span></div>
@@ -25,7 +24,7 @@
 <footer class="site-footer"><div class="footer-identity"><a class="brand footer-brand" href="./" aria-label="Robotemist home"><span class="brand-symbol" aria-hidden="true"></span><span>Robotemist</span></a><span class="copyright">© 2026 Robotemist</span></div><nav class="footer-links" aria-label="Footer navigation"><a href="./#contact">Contact us</a><a href="asset-licenses.txt" target="_blank" rel="noopener">Illustration credits</a></nav></footer>
 <script>
 (function(){
-const ENDPOINT = 'https://formsubmit.co/ajax/info@robotemist.com';
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycby0L1jPtFccDMGqEB-DXt873_BtSPkcV1X6wzlzx6IQ-p4nMekWfebF3vacI909eb84/exec';
 const form = document.getElementById('demo-form');
 const status = document.getElementById('demo-status');
 const button = form.querySelector('button[type=submit]');
@@ -65,18 +64,16 @@ form.addEventListener('submit', async (e) => {
   button.textContent = 'Sending…';
   status.className = 'form-status';
   status.textContent = '';
-  const data = {
+  const data = new URLSearchParams({
     email: fields.email[0].value.trim(),
-    _replyto: fields.email[0].value.trim(),
-    _subject: fields.subject[0].value.trim(),
     subject: fields.subject[0].value.trim(),
     message: fields.message[0].value,
-    _template: 'table'
-  };
+    _honey: form._honey.value
+  });
   try {
-    const res = await fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) });
+    const res = await fetch(ENDPOINT, { method: 'POST', body: data });
     const out = await res.json().catch(() => ({}));
-    if (!res.ok || String(out.success) === 'false') throw new Error(out.message || 'Request failed');
+    if (!res.ok || out.success !== true) throw new Error(out.message || 'Request failed');
     form.reset();
     status.className = 'form-status is-success';
     status.textContent = 'Thanks. Your message was sent. We’ll reply by email. Taking you back to the homepage…';
